@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  caddy:
+      image: caddy:2-alpine
+      ports:
+        - 80:80
+        - 443:443
+      networks:
+        - default
+      volumes:
+        - caddy:/data
+        - Caddyfile:/etc/caddy/Caddyfile
+
+  mariadb:
+    image: mariadb
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: pomidor
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb:/var/lib/mysql         
+    networks:
+      - default
+
+  api:
+    build: api
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - default
+
+  frontend:
+    build: frontend
+    restart: always
+    networks:
+      - default
+
+networks:
+  default: {}
+
+volumes:
+  mariadb: {}
+  caddy: {}

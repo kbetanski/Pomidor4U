@@ -25,7 +25,7 @@ import { TasksService } from 'src/services/tasks.service';
 import { UsersService } from 'src/services/users.service';
 
 @UseGuards(JwtAuthGuard)
-@Controller('tasks')
+@Controller('api/tasks')
 @ApiBearerAuth()
 @ApiTags('tasks')
 export class TasksController {

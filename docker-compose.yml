@@ -2,6 +2,8 @@ version: '3.3'
 services:
   caddy:
       image: caddy:2-alpine
+      env_file: .env
+      restart: always
       ports:
         - 80:80
         - 443:443
@@ -26,6 +28,8 @@ services:
 
   api:
     build: api
+    environment:
+      DATABASE_URL: "mysql://root:password@mariadb:3306/pomidor"
     env_file:
       - .env
     restart: always

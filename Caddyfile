@@ -1,4 +1,5 @@
-${APP_ADDRESS}
+{$APP_ADDRESS}
 
+reverse_proxy /api api:3000
 reverse_proxy /api/* api:3000
 reverse_proxy * frontend:80

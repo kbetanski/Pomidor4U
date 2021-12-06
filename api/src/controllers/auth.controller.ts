@@ -19,7 +19,7 @@ import { User } from 'src/models/user.model';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { UsersService } from 'src/services/users.service';
 
-@Controller()
+@Controller('api')
 @ApiTags('auth')
 export class AuthController {
   constructor(

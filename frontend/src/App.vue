@@ -69,19 +69,19 @@ export default {
         drawer: null,
         items: [
             {
-                title: 'Timer',
+                title: 'Czasomierz',
                 icon: 'mdi-clock-outline'
             },
             {
-                title: 'Tasks',
+                title: 'Zadania',
                 icon: 'mdi-clipboard-list-outline'
             },
             {
-                title: 'Profile',
+                title: 'Profil',
                 icon: 'mdi-card-account-details-outline'
             },
             {
-                title: 'Logout',
+                title: 'Wyloguj',
                 icon: 'mdi-exit-to-app'
             }
         ]

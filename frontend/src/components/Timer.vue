@@ -1,6 +1,6 @@
 <template>
   <v-col>
-    <v-row align="center" justify="center">
+    <v-row align="center" justify="center py-4">
       <v-progress-circular
         color="primary"
         size="250"
@@ -40,54 +40,84 @@
       </v-progress-circular>
     </v-row>
 
-    <v-row id="timerButtons" justify="center" class="py-6 d-flex justify-center mb-6 flex-wrap">
+    <v-container justify="center" class="d-flex justify-center flex-wrap">
         <v-btn
-          class="mx-2 py-2"
+          class="mx-2 my-2"
           color="primary"
           elevation="2"
           rounded
           id="work"
           @click="setWork()"
         >
-          Work
+          Praca
         </v-btn>
         <v-btn
-          class="mx-2 py-2"
+          class="mx-2 my-2"
           elevation="2"
           rounded
           id="shortBreak"
           @click="setShortBreak()"
         >
-          Short Break
+          Krótka przerwa
         </v-btn>
         <v-btn
-          class="mx-2 py-2"
+          class="mx-2 my-2"
           color="secondary"
           elevation="2"
           rounded
           id="longBreak"
           @click="setLongBreak()"
         >
-          Long Break
+          Długa przerwa
         </v-btn>
-    </v-row>
+    </v-container>
+    <v-container id="customTime" justify="center"  class="fluid d-flex justify-center">
+        <v-text-field
+          v-model="customTime"
+          prefix="Inny czas:"
+          required
+        >
+
+        </v-text-field>
+        <v-btn
+          class="mx-2 my-2"
+          color="secondary"
+          elevation="2"
+          rounded
+          id="customTime"
+          @click="setCustomTime()"
+        >
+          Ustaw
+        </v-btn>
+    </v-container>
   </v-col>
 </template>
 
 <script>
+function notify (body) {
+    return new Notification('Pomidor4U', { body })
+}
+
 export default {
     name: 'Timer',
-    mounted: function () {
+    mounted: async function () {
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission()
+        }
+
         this.interval = setInterval(this.intervalCallback, 1000)
     },
     data: function () {
         return {
-            minutes: 25,
-            seconds: 0,
+            audio: new Audio('https://onlineclock.net/audio/options/default.mp3'),
+            customTime: '15:00',
             interval: null,
-            started: false,
+            limit: 0,
+            minutes: 25,
             progress: 0,
-            progressIncrement: 0
+            progressIncrement: 0,
+            seconds: 0,
+            started: false
         }
     },
     methods: {
@@ -95,8 +125,18 @@ export default {
             this.minutes = mins
             this.seconds = secs
             this.started = started
+            this.limit = mins * 60 + secs
             this.progress = 0
-            this.progressIncrement = 100 / (this.minutes * 60)
+            this.progressIncrement = 100 / this.limit
+        },
+        setCustomTime: function () {
+            const regex = /(\d\d|\d):(\d\d)/
+
+            if (regex.test(this.customTime)) {
+                const results = regex.exec(this.customTime)
+
+                this.resetVariables(results[1], results[2])
+            }
         },
         setWork: function () {
             this.resetVariables(25, 0)
@@ -111,7 +151,7 @@ export default {
             this.started = true
         },
         stopTimer: function () {
-            this.resetVariables(25, 0, false)
+            this.started = false
         },
         intervalCallback: function () {
             if (!this.started) return false
@@ -128,8 +168,13 @@ export default {
             this.progress = this.progressIncrement + this.progress
         },
         timerComplete: function () {
+            if (Notification.permission === 'granted') {
+                notify('Timer has reached the end of time.')
+
+                this.audio.play()
+            }
             this.started = false
-            this.fillerHeight = 0
+            this.progress = 0
         }
     },
     computed: {
@@ -151,3 +196,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+  #customTime {
+    max-width: 250px;
+  }
+</style>

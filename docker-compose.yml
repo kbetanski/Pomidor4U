@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   caddy:
       image: caddy:2-alpine
@@ -9,7 +9,7 @@ services:
         - default
       volumes:
         - caddy:/data
-        - Caddyfile:/etc/caddy/Caddyfile
+        - ./Caddyfile:/etc/caddy/Caddyfile
 
   mariadb:
     image: mariadb

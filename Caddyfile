@@ -1,4 +1,4 @@
-pomidor4u.betanski.dev
+localhost
 
 reverse_proxy /api/* api:3000
 reverse_proxy * frontend:80

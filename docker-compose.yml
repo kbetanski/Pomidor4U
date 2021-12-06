@@ -15,9 +15,8 @@ services:
     image: mariadb
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: pomidor
+    env_file:
+      - .env
     ports:
       - '3306:3306'
     volumes:

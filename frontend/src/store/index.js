@@ -15,10 +15,28 @@ const store = new Vuex.Store({
         user: {},
         count: 0,
         tasks: [
-            { id: 1, title: 'Collect packages', finished: false },
-            { id: 2, title: 'Workout', finished: false },
-            { id: 3, title: 'Read one chapter', finished: false },
-            { id: 4, title: 'Buy socks', finished: true }
+            {
+                id: 1,
+                title: 'Odebrać paczki',
+                description: 'Do odebrania kilka rzeczy z paczkomatu przy Netto',
+                finished: false
+            },
+            {
+                id: 2,
+                title: 'Ćwiczenia',
+                finished: false
+            },
+            {
+                id: 3,
+                title: 'Przeczytaj ksiąkę o Rust',
+                description: 'Przynajmniej jeden rozdział dziennie',
+                finished: false
+            },
+            {
+                id: 4,
+                title: 'Kupić skarpety',
+                finished: true
+            }
         ],
         drawer: null
     },
@@ -69,10 +87,11 @@ const store = new Vuex.Store({
         name: state => state.name,
         isLoggedIn: state => !!state.accessToken,
         authStatus: state => state.status,
-        thisTask: state => taskId => state.tasks.find(task => task.id === taskId),
-        doneTasks: state => state.tasks.filter(task => task.finished),
         activeTasks: state => state.tasks.filter(task => !task.finished),
-        activeTasksCount: state => state.tasks.length
+        activeTasksCount: state => state.tasks.length,
+        doneTasks: state => state.tasks.filter(task => task.finished),
+        tasks: state => state.tasks,
+        thisTask: state => taskId => state.tasks.find(task => task.id === taskId)
     },
     actions: {
         incrementAsync ({ commit }) {

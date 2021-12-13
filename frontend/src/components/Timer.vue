@@ -135,7 +135,7 @@ export default {
             if (regex.test(this.customTime)) {
                 const results = regex.exec(this.customTime)
 
-                this.resetVariables(results[1], results[2])
+                this.resetVariables(parseInt(results[1]), parseInt(results[2]))
             }
         },
         setWork: function () {
@@ -156,7 +156,7 @@ export default {
         intervalCallback: function () {
             if (!this.started) return false
             if (this.seconds === 0) {
-                if (this.minutes === 0) {
+                if (this.progress === 100) {
                     this.timerComplete()
                     return
                 }

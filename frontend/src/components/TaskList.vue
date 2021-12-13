@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <v-container class="justify-center">
     <ul class="todos-list">
       <li class="todo-item" v-for="todo in todos" :key="todo.id">
         <span
@@ -11,7 +11,7 @@
         <span class="del-todo" @click="deleteTodo(todo)">Delete</span>
       </li>
     </ul>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -21,7 +21,7 @@ export default {
     name: 'Todos',
     data () {
         return {
-            todos: this.$store.state.todos
+            todos: this.$store.todos
         }
     },
     methods: {

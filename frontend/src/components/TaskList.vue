@@ -1,14 +1,14 @@
 <template>
   <v-container class="justify-center">
-    <ul class="todos-list">
-      <li class="todo-item" v-for="todo in todos" :key="todo.id">
+    <ul class="task-list">
+      <li class="task-item" v-for="task in tasks" :key="task.id">
         <span
-          class="todo-content"
-          :class="{ done: todo.done }"
-          @click="markItDone(todo)"
-          >{{ todo.title }}</span
+          class="task-content"
+          :class="{ done: task.finished }"
+          @click="markItDone(task)"
+          >{{ task.title }}</span
         >
-        <span class="del-todo" @click="deleteTodo(todo)">Delete</span>
+        <span class="del-todo" @click="deleteTask(task)">Delete</span>
       </li>
     </ul>
   </v-container>
@@ -18,22 +18,22 @@
 import { mapGetters } from 'vuex'
 
 export default {
-    name: 'Todos',
+    name: 'TaskList',
     data () {
         return {
-            todos: this.$store.todos
+            tasks: this.$store.tasks
         }
     },
     methods: {
-        markItDone (todo) {
-            this.$store.commit('missionCompleted', todo.id)
+        markItDone (task) {
+            this.$store.commit('missionCompleted', task.id)
         },
-        deleteTodo (todo) {
-            this.$store.commit('deleteTodo', todo.id)
+        deleteTask (task) {
+            this.$store.commit('deleteTask', task.id)
         }
     },
     computed: {
-        ...mapGetters(['doneTodos', 'activeTodos'])
+        ...mapGetters(['doneTasks', 'activeTasks'])
     }
 }
 </script>

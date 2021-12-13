@@ -1,12 +1,12 @@
 <template>
   <v-navigation-drawer v-model="drawer" absolute temporary>
     <v-list-item>
-      <v-list-item-avatar>
-        <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+      <v-list-item-avatar color="primary" >
+        {{ this.getName()[0] }}
       </v-list-item-avatar>
 
       <v-list-item-content>
-        <v-list-item-title>John Leider</v-list-item-title>
+        <v-list-item-title>{{ this.getName() }}</v-list-item-title>
       </v-list-item-content>
     </v-list-item>
 
@@ -44,11 +44,18 @@ export default {
             this.drawer = !this.drawer
         },
         hide: function (route) {
+            if (route.name === this.$router.currentRoute.name) {
+                return
+            }
+
             if (this.$store.getters.isLoggedIn) {
                 return route.meta.requiresAuth
             } else if (!this.$store.getters.isLoggedIn) {
                 return !route.meta.requiresAuth
             }
+        },
+        getName: function () {
+            return this.$store.getters.name
         }
     },
     data: () => ({

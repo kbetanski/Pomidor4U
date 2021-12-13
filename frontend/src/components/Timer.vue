@@ -40,7 +40,7 @@
       </v-progress-circular>
     </v-row>
 
-    <v-container justify="center" class="d-flex justify-center flex-wrap">
+    <v-container class="d-flex justify-center flex-wrap">
         <v-btn
           class="mx-2 my-2"
           color="primary"
@@ -71,7 +71,7 @@
           Długa przerwa
         </v-btn>
     </v-container>
-    <v-container id="customTime" justify="center"  class="fluid d-flex justify-center">
+    <v-container id="customTime" class="fluid d-flex justify-center">
         <v-text-field
           v-model="customTime"
           prefix="Inny czas:"

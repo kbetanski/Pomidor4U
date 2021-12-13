@@ -6,7 +6,6 @@ import store from '../store'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Tasks from '../views/Tasks.vue'
-import Profile from '../views/Profile.vue'
 
 Vue.use(VueRouter)
 
@@ -40,16 +39,6 @@ const routes = [
             requiresAuth: true,
             title: 'Zadania',
             icon: 'mdi-clipboard-list-outline'
-        }
-    },
-    {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile,
-        meta: {
-            requiresAuth: true,
-            title: 'Profil',
-            icon: 'mdi-card-account-details-outline'
         }
     },
     {

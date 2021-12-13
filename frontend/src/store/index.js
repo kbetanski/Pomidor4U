@@ -7,6 +7,9 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         status: '',
+        id: localStorage.getItem('id') || '',
+        name: localStorage.getItem('name') || '',
+        email: localStorage.getItem('email') || '',
         accessToken: localStorage.getItem('accessToken') || '',
         refreshToken: localStorage.getItem('refreshToken') || '',
         user: {},
@@ -35,41 +38,41 @@ const store = new Vuex.Store({
             state.status = ''
             state.accessToken = ''
             state.refreshToken = ''
+            state.id = ''
+            state.email = ''
+            state.name = ''
+        },
+        profile (state, { id, email, name }) {
+            state.id = id
+            state.email = email
+            state.name = name
         },
         increment: state => state.count++,
-        decrement: state => state.count--
-        // taskCompleted: async function (state, taskId) {
-        //     const task = await apiClient.updateTask({ finished: true, id: taskId })
+        decrement: state => state.count--,
+        taskCompleted: async function (state, taskId) {
+            const item = state.getters.tasks.thisTodo(taskId)
 
-        //     const item = state.getters.tasks.thisTodo(task.id)
-
-        //     item.finished = task.finished
-        // },
-        // addTask: function (state, taskTitle) {
-        //     const todo = apiClient.createTask(taskTitle).then()
-
-        //     state.tasks.push({
-        //         id: todo.id,
-        //         title: taskTitle,
-        //         done: false
-        //     })
-        // },
-        // deleteTodo: function (state, todoId) {
-        //     const todoIndex = state.todos.indexOf(
-        //         store.getters.thisTodo(todoId)
-        //     )
-        //     state.todos.splice(todoIndex, 1)
-        //     delete state.todos[todoIndex].text
-        //     console.log(state.todos[todoIndex])
-        // }
+            item.finished = true
+        },
+        addTask: function (state, task) {
+            state.tasks.push(task)
+        },
+        deleteTodo: function (state, taskId) {
+            const taskIndex = state.tasks.indexOf(
+                store.getters.thisTodo(taskId)
+            )
+            state.tasks.splice(taskIndex, 1)
+            delete state.tasks[taskIndex].text
+        }
     },
     getters: {
+        name: state => state.name,
         isLoggedIn: state => !!state.accessToken,
         authStatus: state => state.status,
-        thisTodo: state => todoId => state.tasks.find(todo => todo.id === todoId),
-        doneTodos: state => state.tasks.filter(todo => todo.finished),
-        activeTodos: state => state.tasks.filter(todo => !todo.finished),
-        activeTodosCount: state => state.tasks.length
+        thisTask: state => taskId => state.tasks.find(task => task.id === taskId),
+        doneTasks: state => state.tasks.filter(task => task.finished),
+        activeTasks: state => state.tasks.filter(task => !task.finished),
+        activeTasksCount: state => state.tasks.length
     },
     actions: {
         incrementAsync ({ commit }) {
@@ -78,12 +81,42 @@ const store = new Vuex.Store({
                 commit('increment')
             }, 1000)
         },
-        async login ({ commit }, authData) {
+        async login ({ commit, dispatch }, authData) {
             try {
                 commit('auth_request')
 
                 const { data } = await axios({
                     url: 'https://pomidor4u.betanski.dev/api/login',
+                    method: 'post',
+                    data: authData
+                })
+
+                const { accessToken, refreshToken } = data
+
+                commit('auth_success', { accessToken, refreshToken })
+
+                localStorage.setItem('accessToken', accessToken)
+                localStorage.setItem('refreshToken', refreshToken)
+
+                axios.defaults.headers.common.Authorization = accessToken
+
+                dispatch('profile')
+
+                return data
+            } catch (error) {
+                commit('auth_error')
+
+                localStorage.removeItem('accessToken')
+
+                throw new Error(`Authentication failed: ${error}`)
+            }
+        },
+        async register ({ commit }, authData) {
+            try {
+                commit('auth_request')
+
+                const { data } = await axios({
+                    url: 'https://pomidor4u.betanski.dev/api/register',
                     method: 'post',
                     data: authData
                 })
@@ -104,6 +137,31 @@ const store = new Vuex.Store({
                 localStorage.removeItem('accessToken')
 
                 throw new Error(`Authentication failed: ${error}`)
+            }
+        },
+        async profile ({ commit }) {
+            try {
+                const { data } = await axios({
+                    url: 'https://pomidor4u.betanski.dev/api/profile',
+                    method: 'get',
+                    headers: {
+                        Authorization: `Bearer ${this.state.accessToken}`
+                    }
+                })
+
+                const { id, email, name } = data
+
+                commit('profile', { id, email, name })
+
+                localStorage.setItem('id', id)
+                localStorage.setItem('email', email)
+                localStorage.setItem('name', name)
+
+                return data
+            } catch (error) {
+                commit('auth_error')
+
+                throw new Error(`Request failed: ${error}`)
             }
         },
         logout ({ commit }) {

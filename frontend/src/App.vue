@@ -21,11 +21,8 @@
 
     <v-main>
       <v-sheet class="overflow-hidden fill-height" style="position: relative">
-        <v-container
-          fluid
-          fill-height
-        >
-            <router-view />
+        <v-container fluid fill-height>
+          <router-view />
         </v-container>
 
         <nav-bar ref="navBar" />
@@ -35,7 +32,6 @@
 </template>
 
 <script>
-
 import NavBar from './components/NavBar.vue'
 
 export default {

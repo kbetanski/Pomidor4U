@@ -1,7 +1,7 @@
   <template>
   <v-row justify="center" align="stretch">
     <v-col cols="auto">
-      <v-card class="px-4">
+      <v-card class="my-4" max-width="600">
         <v-card-text>
           <v-form ref="registerForm" v-model="valid" lazy-validation>
             <v-row>
@@ -17,7 +17,7 @@
                 <v-text-field v-model="content" label="Opis"></v-text-field>
               </v-col>
               <v-spacer></v-spacer>
-              <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
+              <v-col class="py-auto">
                 <v-btn
                   x-large
                   block
@@ -32,7 +32,30 @@
         </v-card-text>
       </v-card>
       <v-card
-        v-for="task in tasks"
+        v-for="task in activeTasks"
+        :key="task.id"
+        class="my-4"
+        hover
+        max-width="600"
+      >
+        <v-list-item-content>
+          <v-card-title class="text-h5 mb-1">
+            {{ task.title }}
+          </v-card-title>
+          <v-card-text v-if="task.content">{{ task.content }}</v-card-text>
+        </v-list-item-content>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text
+            color="primary"
+            class="px-5"
+            @click="markItDone(task)"
+            >Ukończ</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+      <v-card
+        v-for="task in doneTasks"
         :key="task.id"
         class="my-4"
         hover
@@ -49,18 +72,9 @@
             text
             color="secondary"
             class="px-5"
-            v-if="task.finished"
             @click="deleteTask(task.id)"
           >
             Usuń</v-btn
-          >
-          <v-btn
-            text
-            color="primary"
-            class="px-5"
-            v-else
-            @click="markItDone(task)"
-            >Wykonane</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -89,7 +103,7 @@ export default {
         await this.$store.dispatch('getTasks')
     },
     computed: {
-        ...mapGetters(['doneTodos', 'activeTodos'])
+        ...mapGetters(['doneTasks', 'activeTasks'])
     },
     methods: {
         async markItDone (task) {

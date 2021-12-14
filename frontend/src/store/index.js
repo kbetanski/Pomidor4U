@@ -48,9 +48,11 @@ const store = new Vuex.Store({
         increment: state => state.count++,
         decrement: state => state.count--,
         update_task: async function (state, task) {
-            const index = state.tasks.findIndex(el => el.id === task.id)
+            const taskIndex = state.tasks.indexOf(
+                store.getters.thisTask(task.id)
+            )
 
-            state.tasks[index] = task
+            state.tasks[taskIndex] = task
         },
         add_task: function (state, task) {
             state.tasks.push(task)
@@ -63,7 +65,7 @@ const store = new Vuex.Store({
                 store.getters.thisTask(taskId)
             )
             state.tasks.splice(taskIndex, 1)
-            delete state.tasks[taskIndex].text
+            delete state.tasks[taskIndex]
         }
     },
     getters: {

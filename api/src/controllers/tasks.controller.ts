@@ -94,8 +94,10 @@ export class TasksController {
     @Param() params,
     @Request() req,
   ): Promise<Task> {
+    const taskId = parseInt(params.id);
+
     const task = await this.tasksService.task({
-      where: { id: params.id, AND: { userId: req.user.id } },
+      where: { id: taskId, AND: { userId: req.user.id } },
     });
 
     if (!task) {

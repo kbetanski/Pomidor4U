@@ -56,7 +56,7 @@
             <v-card-text>
               <v-form ref="registerForm" v-model="valid" lazy-validation>
                 <v-row>
-                  <v-col cols="12" sm="6" md="6">
+                  <v-col cols="12">
                     <v-text-field
                       v-model="name"
                       :rules="[rules.required]"

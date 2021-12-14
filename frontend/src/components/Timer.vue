@@ -101,10 +101,6 @@ function notify (body) {
 export default {
     name: 'Timer',
     mounted: async function () {
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission()
-        }
-
         this.interval = setInterval(this.intervalCallback, 1000)
     },
     data: function () {

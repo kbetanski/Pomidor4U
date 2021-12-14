@@ -3,17 +3,17 @@
 import axios from 'axios'
 
 class ApiClient {
-    constructor (url, accessToken = '', refreshToken = '') {
+    constructor ({ url, accessToken, refreshToken }) {
         this.url = url
         this.accessToken = accessToken
         this.refreshToken = refreshToken
     }
 
-    async login (email, password) {
-        const { data } = await axios({
+    async login ({ email, password }) {
+        const { data } = await this.makeRequest({
             method: 'post',
-            url: `${this.url}/login`,
-            data: {
+            path: '/login',
+            payload: {
                 email,
                 password
             }
@@ -22,14 +22,17 @@ class ApiClient {
         this.accessToken = data.accessToken
         this.refreshToken = data.refreshToken
 
-        return data
+        return {
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken
+        }
     }
 
-    async register (name, email, password) {
-        const { data } = await axios({
+    async register ({ name, email, password }) {
+        const { data } = await this.makeRequest({
             method: 'post',
-            url: `${this.url}/login`,
-            data: {
+            path: '/register',
+            payload: {
                 name,
                 email,
                 password
@@ -39,82 +42,149 @@ class ApiClient {
         this.accessToken = data.accessToken
         this.refreshToken = data.refreshToken
 
-        return data
+        return {
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken
+        }
     }
 
-    async refreshToken () {
+    async refresh () {
         const { data } = await axios({
             method: 'post',
-            url: `${this.url}/login`,
+            url: `${this.url}/refresh-token`,
             data: {
                 refreshToken: this.refreshToken
+            },
+            headers: {
+                Authorization: `Bearer ${this.accessToken}`
             }
         })
 
-        this.accessToken = data.accessToken
-        this.refreshToken = data.refreshToken
-
-        return data
+        return {
+            accessToken: this.accessToken,
+            refreshToken: data.refreshToken
+        }
     }
 
     async getProfile () {
-        const { data } = await axios({
+        const { auth, data } = await this.makeRequest({
             method: 'get',
-            url: `${this.url}/login`
+            path: '/profile'
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
     }
 
     async getTask (id) {
-        const { data } = await axios({
+        const { auth, data } = await this.makeRequest({
             method: 'get',
-            url: `${this.url}/tasks/${id}`
+            path: `/tasks/${id}`
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
     }
 
-    async getTasks (id) {
-        const { data } = await axios({
+    async getTasks () {
+        const { auth, data } = await this.makeRequest({
             method: 'get',
-            url: `${this.url}/tasks`
+            path: '/tasks'
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
     }
 
     async deleteTask (id) {
-        const { data } = await axios({
+        const { auth, data } = await this.makeRequest({
             method: 'delete',
-            url: `${this.url}/tasks/${id}`
+            path: `/tasks/${id}`
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
     }
 
     async updateTask (task) {
-        const { data } = await axios({
+        const { data, auth } = await this.makeRequest({
             method: 'patch',
-            url: `${this.url}/tasks/${task.id}`,
-            data: {
+            path: `/tasks/${task.id}`,
+            payload: {
                 title: task.title,
                 content: task.content,
                 finished: task.finished
             }
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
     }
 
     async createTask (task) {
-        const { data } = await axios({
+        const { data, auth } = await this.makeRequest({
             method: 'post',
-            url: `${this.url}/tasks`,
-            data: task
+            path: '/tasks',
+            payload: task
         })
 
-        return data
+        return {
+            data,
+            auth
+        }
+    }
+
+    async makeRequest ({ method, path, payload }) {
+        try {
+            const response = await axios({
+                method,
+                url: `${this.url}${path}`,
+                data: payload,
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`
+                }
+            })
+
+            return {
+                data: response.data,
+                auth: null
+            }
+        } catch (error) {
+            if (error.response.status !== 401) {
+                console.error(error)
+
+                throw new Error(error)
+            }
+
+            const auth = await this.refresh()
+
+            this.accessToken = auth.accessToken
+            this.refreshToken = auth.refreshToken
+
+            const { data } = await axios({
+                method,
+                url: `${this.url}${path}`,
+                data: payload,
+                headers: {
+                    Authorization: `Bearer ${this.accessToken}`
+                }
+            })
+
+            return {
+                data,
+                auth
+            }
+        }
     }
 }
 

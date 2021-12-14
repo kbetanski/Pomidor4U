@@ -1,59 +1,67 @@
   <template>
-  <v-card class="mx-auto" max-width="500">
-    <v-list two-line>
-      <v-list-item-group v-model="selected" active-class="green--text" multiple>
-        <template v-for="(task, index) in tasks">
-          <v-list-item :key="task.title">
-            <template v-slot:default="{ active }">
-              <v-list-item-content>
-                <v-list-item-title v-text="task.title"></v-list-item-title>
-
-                <v-list-item-subtitle
-                  v-text="task.description"
-                ></v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-action>
-                <v-list-item-action-text
-                  v-text="task.action"
-                ></v-list-item-action-text>
-
-                <v-icon v-if="!active" color="grey lighten-1">
-                  mdi-star-outline
-                </v-icon>
-
-                <v-icon v-else color="yellow darken-3"> mdi-star </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-
-          <v-divider v-if="index < tasks.length - 1" :key="index"></v-divider>
-        </template>
-      </v-list-item-group>
-    </v-list>
-  </v-card>
+  <v-row justify="center" align="stretch">
+    <v-col cols="auto">
+      <v-card
+        v-for="task in tasks"
+        :key="task.id"
+        class="my-4"
+        hover
+        max-width="600"
+      >
+        <v-list-item-content>
+          <v-card-title class="text-h5 mb-1">
+            {{ task.title }}
+          </v-card-title>
+          <v-card-text v-if="task.content">{{ task.content }}</v-card-text>
+        </v-list-item-content>
+        <v-card-actions class="justify-end">
+          <v-btn
+            text
+            color="secondary"
+            class="px-5"
+            v-if="task.finished"
+            @click="deleteTask(task.id)"
+          >
+            Usuń</v-btn
+          >
+          <v-btn
+            text
+            color="primary"
+            class="px-5"
+            v-else
+            @click="markItDone(task)"
+            >Wykonane</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
     name: 'TaskList',
-    data () {
+    data: function () {
         return {
             tasks: this.$store.getters.tasks
         }
     },
-    methods: {
-        markItDone (taskId) {
-            this.$store.commit('missionCompleted', taskId)
-        },
-        deleteTask (taskId) {
-            this.$store.commit('deleteTask', taskId)
-        }
+    mounted: async function () {
+        await this.$store.dispatch('getTasks')
     },
-    computed: {
-        ...mapGetters(['doneTasks', 'activeTasks'])
+
+    methods: {
+        async markItDone (task) {
+            await this.$store.dispatch('updateTask', {
+                id: task.id,
+                title: task.title,
+                content: task.content,
+                finished: !task.finished
+            })
+        },
+        async deleteTask (taskId) {
+            await this.$store.dispatch('deleteTask', taskId)
+        }
     }
 }
 </script>

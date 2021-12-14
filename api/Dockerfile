@@ -1,6 +1,4 @@
-FROM node:16-alpine
-
-RUN apk add --no-cache tini
+FROM node:16
 
 WORKDIR /app
 
@@ -11,7 +9,7 @@ RUN npm install
 
 COPY ./ /app/
 
+RUN npx prisma generate
 RUN npm run build
 
-ENTRYPOINT [ "tini" ]
-CMD [ "node", "/app/dist/main.js" ]
+ENTRYPOINT [ "bash", "docker-entrypoint.sh" ]

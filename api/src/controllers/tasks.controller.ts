@@ -25,7 +25,7 @@ import { TasksService } from 'src/services/tasks.service';
 import { UsersService } from 'src/services/users.service';
 
 @UseGuards(JwtAuthGuard)
-@Controller('tasks')
+@Controller('api/tasks')
 @ApiBearerAuth()
 @ApiTags('tasks')
 export class TasksController {
@@ -70,7 +70,9 @@ export class TasksController {
   @ApiParam({ name: 'id', required: true })
   @ApiResponseProperty({ type: Task })
   public async delete(@Param() params): Promise<Task> {
-    return this.tasksService.deleteTask({ id: params.id });
+    const taskId = parseInt(params.id);
+
+    return this.tasksService.deleteTask({ id: taskId });
   }
 
   @Post()
@@ -94,8 +96,10 @@ export class TasksController {
     @Param() params,
     @Request() req,
   ): Promise<Task> {
+    const taskId = parseInt(params.id);
+
     const task = await this.tasksService.task({
-      where: { id: params.id, AND: { userId: req.user.id } },
+      where: { id: taskId, AND: { userId: req.user.id } },
     });
 
     if (!task) {

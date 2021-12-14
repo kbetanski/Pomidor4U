@@ -1,30 +1,48 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <v-app>
+    <v-app-bar app color="primary">
+      <v-icon @click.stop="drawer">mdi-menu</v-icon>
+
+      <v-spacer></v-spacer>
+
+      <div class="d-flex align-center">
+        <v-img
+          alt="Pomidor4U Logo"
+          class="shrink mr-2"
+          contain
+          src="./assets/logo.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <div class="title">Pomidor4U</div>
+      </div>
+    </v-app-bar>
+
+    <v-main>
+      <v-sheet class="overflow-hidden fill-height" style="position: relative">
+        <v-container fluid fill-height>
+          <router-view />
+        </v-container>
+
+        <nav-bar ref="navBar" />
+      </v-sheet>
+    </v-main>
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import NavBar from './components/NavBar.vue'
 
-#nav {
-  padding: 30px;
+export default {
+    name: 'App',
+    components: {
+        NavBar
+    },
+    methods: {
+        drawer: function () {
+            this.$refs.navBar.open()
+        }
+    }
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+</script>

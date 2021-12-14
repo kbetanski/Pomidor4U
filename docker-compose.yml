@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  caddy:
+      image: caddy:2-alpine
+      env_file: .env
+      restart: always
+      ports:
+        - 80:80
+        - 443:443
+      networks:
+        - default
+      volumes:
+        - caddy:/data
+        - ./Caddyfile:/etc/caddy/Caddyfile
+
+  mariadb:
+    image: mariadb
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb:/var/lib/mysql         
+    networks:
+      - default
+
+  api:
+    build: api
+    environment:
+      DATABASE_URL: "mysql://root:password@mariadb:3306/pomidor"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - default
+
+  frontend:
+    build: frontend
+    restart: always
+    networks:
+      - default
+
+networks:
+  default: {}
+
+volumes:
+  mariadb: {}
+  caddy: {}

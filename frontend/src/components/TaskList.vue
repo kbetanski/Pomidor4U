@@ -1,6 +1,36 @@
   <template>
   <v-row justify="center" align="stretch">
     <v-col cols="auto">
+      <v-card class="px-4">
+        <v-card-text>
+          <v-form ref="registerForm" v-model="valid" lazy-validation>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="title"
+                  :rules="[rules.required, rules.min]"
+                  label="Tytuł"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="content" label="Opis"></v-text-field>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
+                <v-btn
+                  x-large
+                  block
+                  :disabled="!valid"
+                  color="success"
+                  @click="addTask"
+                  >Dodaj</v-btn
+                >
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
       <v-card
         v-for="task in tasks"
         :key="task.id"
@@ -39,17 +69,28 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'TaskList',
     data: function () {
         return {
-            tasks: this.$store.getters.tasks
+            title: '',
+            content: '',
+            tasks: this.$store.getters.tasks,
+            valid: true,
+            rules: {
+                required: (value) => !!value || 'Wymagane pole',
+                min: (v) => (v && v.length >= 10) || 'Minimum 10 znaków'
+            }
         }
     },
     mounted: async function () {
         await this.$store.dispatch('getTasks')
     },
-
+    computed: {
+        ...mapGetters(['doneTodos', 'activeTodos'])
+    },
     methods: {
         async markItDone (task) {
             await this.$store.dispatch('updateTask', {
@@ -61,6 +102,12 @@ export default {
         },
         async deleteTask (taskId) {
             await this.$store.dispatch('deleteTask', taskId)
+        },
+        async addTask () {
+            await this.$store.dispatch('addTask', {
+                title: this.title,
+                content: this.content
+            })
         }
     }
 }

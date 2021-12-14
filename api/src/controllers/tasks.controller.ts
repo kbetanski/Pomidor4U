@@ -70,7 +70,9 @@ export class TasksController {
   @ApiParam({ name: 'id', required: true })
   @ApiResponseProperty({ type: Task })
   public async delete(@Param() params): Promise<Task> {
-    return this.tasksService.deleteTask({ id: params.id });
+    const taskId = parseInt(params.id);
+
+    return this.tasksService.deleteTask({ id: taskId });
   }
 
   @Post()

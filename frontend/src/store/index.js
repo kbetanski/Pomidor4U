@@ -52,15 +52,15 @@ const store = new Vuex.Store({
 
             state.tasks[index] = task
         },
-        addTask: function (state, task) {
+        add_task: function (state, task) {
             state.tasks.push(task)
         },
         replace_tasks: function (state, tasks) {
             state.tasks = tasks
         },
-        deleteTask: function (state, { taskId }) {
+        delete_task: function (state, { taskId }) {
             const taskIndex = state.tasks.indexOf(
-                store.getters.thisTodo(taskId)
+                store.getters.thisTask(taskId)
             )
             state.tasks.splice(taskIndex, 1)
             delete state.tasks[taskIndex].text
@@ -207,7 +207,7 @@ const store = new Vuex.Store({
                     commit('auth_succes', auth)
                 }
 
-                commit('deleteTask', { taskId })
+                commit('delete_task', { taskId })
 
                 return data
             } catch (error) {
@@ -229,6 +229,27 @@ const store = new Vuex.Store({
                 }
 
                 commit('replace_tasks', data)
+
+                return data
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async addTask ({ commit }, task) {
+            try {
+                const client = new ApiClient({
+                    url: this.state.url,
+                    accessToken: this.state.accessToken,
+                    refreshToken: this.state.refreshToken
+                })
+
+                const { auth, data } = await client.createTask(task)
+
+                if (auth) {
+                    commit('auth_success', auth)
+                }
+
+                commit('add_task', data)
 
                 return data
             } catch (error) {

@@ -61,7 +61,7 @@ class ApiClient {
         })
 
         return {
-            accessToken: this.accessToken,
+            accessToken: data.accessToken,
             refreshToken: data.refreshToken
         }
     }
@@ -168,15 +168,12 @@ class ApiClient {
 
             const auth = await this.refresh()
 
-            this.accessToken = auth.accessToken
-            this.refreshToken = auth.refreshToken
-
             const { data } = await axios({
                 method,
                 url: `${this.url}${path}`,
                 data: payload,
                 headers: {
-                    Authorization: `Bearer ${this.accessToken}`
+                    Authorization: `Bearer ${auth.accessToken}`
                 }
             })
 

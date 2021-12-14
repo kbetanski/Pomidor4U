@@ -49,8 +49,6 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiResponse({ type: Token })
   public async refreshToken(@Body() data: RefreshTokenInput): Promise<Token> {
     const { refreshToken } = data;

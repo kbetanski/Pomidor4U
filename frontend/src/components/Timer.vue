@@ -95,7 +95,7 @@
 
 <script>
 function notify (body) {
-    return new Notification('Pomidor4U', { body })
+    return new Notification('Pomidor4You', { body })
 }
 
 export default {

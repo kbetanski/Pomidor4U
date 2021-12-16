@@ -16,7 +16,7 @@ const store = new Vuex.Store({
         count: 0,
         tasks: [],
         drawer: null,
-        url: 'https://pomidor4u.betanski.dev/api'
+        url: 'https://pomidor4you.betanski.dev/api'
     },
     mutations: {
         auth_request (state) {

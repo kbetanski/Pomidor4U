@@ -9,7 +9,7 @@ const config: Config = {
   },
   swagger: {
     enabled: true,
-    title: 'Pomidor4U',
+    title: 'Pomidor4You',
     description: 'The best pomodoro app in the world',
     version: '1.5',
     path: 'api',

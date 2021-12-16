@@ -7,7 +7,7 @@
 
       <div class="d-flex align-center">
         <v-img
-          alt="Pomidor4U Logo"
+          alt="Pomidor4You Logo"
           class="shrink mr-2"
           contain
           src="./assets/logo.png"
@@ -15,7 +15,7 @@
           width="40"
         />
 
-        <div class="title">Pomidor4U</div>
+        <div class="title">Pomidor4You</div>
       </div>
     </v-app-bar>
 
